@@ -89,40 +89,43 @@ function pedirUnLibro(numeroDeLibro, funcionDeCallback, errorHandlingCallback) {
 // let laData = pedirUnLibro(0)
 // console.log(laData) // undefined
 
+// **** CALLBACKS ****
 
-// pedirUnLibro(0, (data) => {
-//   // console.log("la data ya deberia estar lista")
-//   console.log(data)
+pedirUnLibro(0, (data) => {
+  // console.log("la data ya deberia estar lista")
+  console.log(data)
 
-//   pedirUnLibro(1, (data) => {
-//     // console.log("la data ya deberia estar lista")
-//     console.log(data)
+  pedirUnLibro(1, (data) => {
+    // console.log("la data ya deberia estar lista")
+    console.log(data)
 
-//     pedirUnLibro(2, (data) => {
-//       // console.log("la data ya deberia estar lista")
-//       console.log(data)
-//       pedirUnLibro(5, (data) => {
-//         // console.log("la data ya deberia estar lista")
-//         console.log(data)
+    pedirUnLibro(2, (data) => {
+      // console.log("la data ya deberia estar lista")
+      console.log(data)
+      pedirUnLibro(5, (data) => {
+        // console.log("la data ya deberia estar lista")
+        console.log(data)
   
-//       }, (error) => {
-//         console.log(error)
-//       })
+      }, (error) => {
+        console.log(error)
+      })
 
-//     }, (error) => {
-//       console.log(error)
-//     })
+    }, (error) => {
+      console.log(error)
+    })
 
-//   }, (error) => {
-//     console.log(error)
-//   })
+  }, (error) => {
+    console.log(error)
+  })
 
-// }, (error) => {
-//   console.log(error)
-// })
+}, (error) => {
+  console.log(error)
+})
 
 
 
+
+// **** PROMESAS ****
 
 function pedirLibroPromesa(indiceDelLibro) {
 
@@ -149,40 +152,40 @@ function pedirLibroPromesa(indiceDelLibro) {
 // const algo = pedirLibroPromesa(0)
 // console.log(algo)
 
-// .then() y .catch()
+// **** RESOLVER PROMESAS CON .then() y .catch() **** 
 
-// pedirLibroPromesa(0)
-// .then((response) => {
-//   // espera el momento en que la promesa cambia de estado a success/fulfilled
-//   console.log(response)
+pedirLibroPromesa(0)
+.then((response) => {
+  // espera el momento en que la promesa cambia de estado a success/fulfilled
+  console.log(response)
 
-//   // si quiero resolver una nueva promesa justo despues de tener el valor de esta, la encadenamos: retornamos la nueva promesa y cojemos su resolución en otro .then()
-//   return pedirLibroPromesa(1)
-// })
-// .then((response) => {
-//   // espera el momento en que la promesa cambia de estado a success/fulfilled
-//   console.log(response)
+  // si quiero resolver una nueva promesa justo despues de tener el valor de esta, la encadenamos: retornamos la nueva promesa y cojemos su resolución en otro .then()
+  return pedirLibroPromesa(1)
+})
+.then((response) => {
+  // espera el momento en que la promesa cambia de estado a success/fulfilled
+  console.log(response)
 
-//   return pedirLibroPromesa(2)
-// })
-// .then((response) => {
-//   // espera el momento en que la promesa cambia de estado a success/fulfilled
-//   console.log(response)
-//   return pedirLibroPromesa(6)
-// })
-// .then((response) => {
-//   console.log(response)
-// })
-// .catch((error) => {
-//   // solo hace falta un gestor de error (.catch). Si falla una, se salta el resto de los .then()
-//   // siempre de último
-//   console.log(error)
-// })
+  return pedirLibroPromesa(2)
+})
+.then((response) => {
+  // espera el momento en que la promesa cambia de estado a success/fulfilled
+  console.log(response)
+  return pedirLibroPromesa(6)
+})
+.then((response) => {
+  console.log(response)
+})
+.catch((error) => {
+  // solo hace falta un gestor de error (.catch). Si falla una, se salta el resto de los .then()
+  // siempre de último
+  console.log(error)
+})
 
 
+// **** RESOLVER PROMESAS CON Promise.all() y promise.allSettled() **** 
 
-// Promise.all() y promise.allSettled()
-// los metodos reciben como argumento un array de promesas
+// los metodos Promise.all() y promise.allSettled() reciben como argumento un array de promesas
 
 Promise.all([
   pedirLibroPromesa(0), // 0.5s
@@ -211,3 +214,45 @@ Promise.allSettled([
 // El Promise.all es cuando queremos que si una falla, todo falla
 // El Promise.allSettled es cuando aunque una falle, nos interesa la data que las que si fueron realizadas correctamentes
 // ambas Promise.all y Promise.allSettled las usamos cuando los argumentos de las promesas no dependen re resultados de promesas anteriores
+
+
+// **** RESOLVER PROMESAS CON async/await **** 
+
+// pedirLibroPromesa(0)
+// pedirLibroPromesa(1)
+// pedirLibroPromesa(2)
+
+async function getData() {
+  // "async" para crear funciones asincronas
+
+  try {
+    // con el "try" le decimos a JS, INTENTA hacer esto
+    const response1 = await pedirLibroPromesa(0) // 1.2s
+    // el "await" basicamente dice ESPERA a que la promesa resuelva antes de continuar
+    console.log(response1)
+  
+    const response2 = await pedirLibroPromesa(1)
+    console.log(response2)
+  
+    const response3 = await pedirLibroPromesa(2)
+    console.log(response3)
+
+    // const response4 = await pedirLibroPromesa(7)
+    // console.log(response4)
+
+    const todasLasRespuestas = await Promise.allSettled([
+      pedirLibroPromesa(0), // 0.5s
+      pedirLibroPromesa(1), // 1.2s
+      pedirLibroPromesa(8) // 0.8s
+    ])
+    console.log(todasLasRespuestas)
+
+  }
+  catch(error) {
+    // con este "catch" le decimos, SI ALGO FALLO en el try, entonces has esto
+    console.log(error)
+  }
+
+}
+
+getData()
